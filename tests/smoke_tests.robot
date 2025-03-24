@@ -11,7 +11,7 @@ Suite Teardown    Teardown Suite
 
 *** Test Cases ***
 Open Home Page
-    [Documentation]    Checks if home page is accessible.
+    [Documentation]    Checks if home page is accessible
     [Tags]    smoke-test
     Get Title    ==    Home | Volvo Group
 
@@ -27,3 +27,19 @@ Navigate To Main Menu Items
     News & Media                   News and Media
     Suppliers                      Supply Chain Partners
     About Us                       About us
+
+
+Navigate Explore Image Links
+    [Documentation]    Tests the 3 image links on home page
+    [Tags]    smoke-test
+    [Template]    Navigate To Explore Image Item And Verify
+
+    # Explore item name            # Expected text in title or page
+    Products & Services            Products and services
+    Our brands                     Our Brands
+    Financial reports 2023         Financial Reports
+
+Navigate To Explore Jobs Page
+    [Documentation]    Tests job page opening as a new tab
+    [Tags]    smoke-test
+    Open Job Page Explore Item, Verify And Close

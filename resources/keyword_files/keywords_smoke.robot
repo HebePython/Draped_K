@@ -2,6 +2,7 @@
 Documentation    Basic Keywords for Smoke tests
 Variables    ${EXECDIR}/resources/util/variables.py
 Library    Browser
+Library    Browser    enable_playwright_debug=True
 
 
 
@@ -19,28 +20,81 @@ Navigate To Menu Item And Verify
     Should Contain    ${title}    ${expected_text}
 
 
+Open Home Page On Volvo Logo And Verify
 
+    Click     role=link[name="Volvo Group logo"]
+
+    Get Title    ==    Home | Volvo Group
+
+Navigate To Explore Image Item And Verify
+    [Arguments]    ${explore_item}    ${expected_text}
+
+    Handle Cookie Popup
+
+    Click    css=img[alt="${explore_item}"]
+    Wait For Elements State    css=body    stable
+
+    ${title}=    Get Title
+    Should Contain    ${title}    ${expected_text}
+    
+
+    Open Home Page On Volvo Logo And Verify
+
+Open Job Page Explore Item, Verify And Close
+
+    Click    css=img[alt="Job openings"]
+
+    Sleep    2s
+    
+   # Get IDs of all open pages
+    ${page_ids}=    Get Page Ids
+    ${list_length}=    Get Length    ${page_ids}
+    Log    Found ${list_length} pages
+    
+    # Switch to new page
+    Switch Page    ${page_ids}[0]
+
+    Handle Cookie Popup
+
+    ${title}=    Get Title
+    Should Contain    ${title}    Jobs at Volvo Group
+
+    Close Page
 
 Handle Cookie Popup
-    [Documentation]    Handles cookie popups by rejecting them
+    [Documentation]    Handles cookie popups by rejecting them with improved timeout handling
     
-    Sleep    1s
+    # Wait longer for popup to appear
+    Sleep    2s
     
-    # Check if cookie popup exists
-    ${popup_visible}=    Get Element Count    id=onetrust-reject-all-handler
-    IF    ${popup_visible} > 0
-        # Use a more specific selector to target the primary reject button
-        Click    id=onetrust-reject-all-handler
-        Wait For Elements State    id=onetrust-reject-all-handler    detached    timeout=5s
-        Log    Cookie popup handled: clicked primary "Reject All" button
-    ELSE
-        # Try the alternative button if the first one isn't found
-        ${alt_button_visible}=    Get Element Count    css=.ot-pc-refuse-all-handler
-        IF    ${alt_button_visible} > 0
-            Click    css=.ot-pc-refuse-all-handler
-            Wait For Elements State    css=.ot-pc-refuse-all-handler    detached    timeout=5s
-            Log    Cookie popup handled: clicked secondary "Reject All" button
-        ELSE
-            Log    No Cookie popup detected
+    # Try to find cookie popup with specific selectors
+    ${popup_visible}=    Run Keyword And Return Status    
+    ...    Wait For Elements State    id=onetrust-banner-sdk    visible    timeout=3s
+    
+    IF    ${popup_visible}
+        # Try multiple possible reject button selectors
+        ${clicked}=    Run Keyword And Return Status    
+        ...    Click    id=onetrust-reject-all-handler
+        
+        IF    not ${clicked}
+            ${clicked}=    Run Keyword And Return Status    
+        ...    Click    css=.ot-pc-refuse-all-handler
         END
+        
+        IF    not ${clicked}
+            ${clicked}=    Run Keyword And Return Status    
+        ...    Click    text="Reject All"
+        END
+        
+        IF    not ${clicked}
+            # Last resort - try to find any button containing reject or decline
+            Click    css=button:has-text("Reject")
+        END
+        
+        Log    Attempted to handle cookie popup
+    ELSE
+        Log    No cookie popup detected
     END
+    
+    # Additional wait to let any animations complete
+    Sleep    1s
