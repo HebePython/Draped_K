@@ -13,8 +13,6 @@ Suite Teardown    Teardown Suite
 Open Home Page
     [Documentation]    Checks if home page is accessible.
     [Tags]    smoke-test
-    Get Title    ==    volvogroup
-    Take Screenshot
-
+    Get Title    ==    Home | Volvo Group
 
 

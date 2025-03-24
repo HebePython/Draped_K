@@ -9,7 +9,7 @@ Setup Suite
 
 Setup Test
     New Browser    chromium    headless=False
-    New Context    viewport={"width": 1920, "height" 1080: }
+    New Context    viewport={"width": 1920, "height" : 1080}
     New Page    https://volvogroup.com
 
 Teardown Test
