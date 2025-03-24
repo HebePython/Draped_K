@@ -15,4 +15,15 @@ Open Home Page
     [Tags]    smoke-test
     Get Title    ==    Home | Volvo Group
 
+Navigate To Main Menu Items
+    [Documentation]    Tests navigational links
+    [Tags]    smoke-test
+    [Template]    Navigate To Menu Item And Verify
 
+    # Menu item name               # Expected text in title or page
+    Sustainable Transportation     Sustainable Transportation
+    Careers                        careers
+    Investors                      Investor
+    News & Media                   News and Media
+    Suppliers                      Supply Chain Partners
+    About Us                       About us
